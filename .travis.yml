@@ -1,36 +1,8 @@
 language: python
-sudo: required
 
-notifications:
-  email: false
-
-python:
-  - '3.6'
-  - '3.6-dev'
-  - '3.7-dev'
-  - 'nightly'
-  - 'pypy'
-
-matrix:
-  allow_failures:
-    - python: '3.6-dev'
-    - python: '3.7-dev'
-    - python: 'nightly'
-    - python: 'pypy'
-
-install:
-  - bash .travis/install.sh
-  - pip install -U -r requirements-dev.txt
-  - pip install python-coveralls
-
-env:
-  CAMISOLE_CONF: '${TRAVIS_BUILD_DIR}/.travis/debian.yml'
+services:
+  - docker
 
 script:
-  - .travis/run.sh 'PYTHONPATH=. python -m camisole languages'
-  - .travis/run.sh 'PYTHONPATH=. python -m camisole test -vv'
-  - .travis/run.sh 'PYTHONPATH=. python -m camisole benchmark'
-  - .travis/run.sh 'python setup.py test'
+  - mv .travis/Dockerfile . && docker build -f Dockerfile .
 
-after_success:
-  - coveralls
